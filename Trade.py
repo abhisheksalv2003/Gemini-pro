@@ -3,15 +3,14 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from ta import add_all_ta_features
 import requests
 from datetime import datetime, timedelta
 
-# Replace 'YOUR_BOT_TOKEN' with your actual bot token
-bot = telebot.TeleBot('7523225309:AAFJ5i1Af7uXLBPF_cNEjNl5osvRpfzotUs')
+# Telegram Bot Token
+bot = telebot.TeleBot('6842258197:AAEcS--nOtRqLnFn4PDVKJsBO1AiAEh1E58')
 
-# Alpha Vantage API key (free tier)
-ALPHA_VANTAGE_API_KEY = '4JWGHYRSVDQW2BL9'
+# Alpha Vantage API key
+ALPHA_VANTAGE_API_KEY = 'OOG3865NPXVAVFEC'
 
 def fetch_forex_data(symbol='EURUSD', interval='5min'):
     base_url = 'https://www.alphavantage.co/query'
@@ -26,29 +25,53 @@ def fetch_forex_data(symbol='EURUSD', interval='5min'):
         'outputsize': 'compact'
     }
     
-    response = requests.get(base_url, params=params)
-    data = response.json()
-    
-    if 'Time Series FX (' + interval + ')' not in data:
-        raise ValueError("Error fetching data from Alpha Vantage API")
-    
-    df = pd.DataFrame(data['Time Series FX (' + interval + ')'])
-    df = df.T
-    df.index = pd.to_datetime(df.index)
-    df.columns = ['Open', 'High', 'Low', 'Close']
-    df = df.astype(float)
-    return df
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        data = response.json()
+        
+        if 'Error Message' in data:
+            raise ValueError(f"API returned an error: {data['Error Message']}")
+        
+        if 'Time Series FX (' + interval + ')' not in data:
+            raise ValueError(f"Expected data not found in API response. Response: {data}")
+        
+        df = pd.DataFrame(data['Time Series FX (' + interval + ')'])
+        df = df.T
+        df.index = pd.to_datetime(df.index)
+        df.columns = ['Open', 'High', 'Low', 'Close']
+        df = df.astype(float)
+        return df
+    except requests.exceptions.RequestException as e:
+        raise ValueError(f"Error making request to Alpha Vantage: {str(e)}")
+    except ValueError as e:
+        raise ValueError(f"Error processing Alpha Vantage data: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Unexpected error: {str(e)}")
 
-# Add technical indicators
 def add_indicators(data):
-    return add_all_ta_features(
-        data, 
-        open="Open", high="High", low="Low", close="Close",
-        volume="Volume",  # Note: Alpha Vantage doesn't provide volume for forex
-        fillna=True
-    )
+    # Calculate SMA
+    data['SMA_10'] = data['Close'].rolling(window=10).mean()
+    data['SMA_30'] = data['Close'].rolling(window=30).mean()
+    
+    # Calculate RSI
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    data['RSI'] = 100 - (100 / (1 + rs))
+    
+    # Calculate MACD
+    exp1 = data['Close'].ewm(span=12, adjust=False).mean()
+    exp2 = data['Close'].ewm(span=26, adjust=False).mean()
+    data['MACD'] = exp1 - exp2
+    data['Signal_Line'] = data['MACD'].ewm(span=9, adjust=False).mean()
+    
+    # Drop NaN values
+    data.dropna(inplace=True)
+    
+    return data
 
-# Train model
 def train_model(data):
     X = data.drop(['Open', 'High', 'Low', 'Close'], axis=1)
     y = np.where(data['Close'].shift(-1) > data['Close'], 1, 0)
@@ -60,7 +83,6 @@ def train_model(data):
     
     return model
 
-# Predict next move
 def predict_next_move(model, latest_data):
     prediction = model.predict(latest_data)
     return "Buy" if prediction[0] == 1 else "Sell"
@@ -73,17 +95,25 @@ def send_welcome(message):
 def predict_command(message):
     try:
         # Fetch real-time forex data
+        bot.reply_to(message, "Fetching real-time forex data...")
         data = fetch_forex_data()
+        
+        bot.reply_to(message, f"Adding technical indicators to {len(data)} data points...")
         data_with_indicators = add_indicators(data)
         
+        bot.reply_to(message, "Training the model...")
         model = train_model(data_with_indicators)
         
         latest_data = data_with_indicators.iloc[-1].drop(['Open', 'High', 'Low', 'Close'])
         prediction = predict_next_move(model, latest_data.values.reshape(1, -1))
         
         bot.reply_to(message, f"The predicted next move for EUR/USD is: {prediction}")
+    except ValueError as e:
+        bot.reply_to(message, f"Error: {str(e)}")
     except Exception as e:
-        bot.reply_to(message, f"An error occurred: {str(e)}")
+        bot.reply_to(message, f"An unexpected error occurred: {str(e)}")
 
 # Start the bot
-bot.polling() a 
+if __name__ == "__main__":
+    print("Starting the Forex Trading Bot...")
+    bot.polling()
