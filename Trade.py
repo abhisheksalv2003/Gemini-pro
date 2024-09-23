@@ -8,10 +8,10 @@ import requests
 from datetime import datetime, timedelta
 
 # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-bot = telebot.TeleBot('YOUR_BOT_TOKEN')
+bot = telebot.TeleBot('7523225309:AAFJ5i1Af7uXLBPF_cNEjNl5osvRpfzotUs')
 
 # Alpha Vantage API key (free tier)
-ALPHA_VANTAGE_API_KEY = 'YOUR_ALPHA_VANTAGE_API_KEY'
+ALPHA_VANTAGE_API_KEY = '4JWGHYRSVDQW2BL9'
 
 def fetch_forex_data(symbol='EURUSD', interval='5min'):
     base_url = 'https://www.alphavantage.co/query'
