@@ -3,7 +3,7 @@ services:
     name: text-to-speech-app
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: cd /opt/render/project/src && gunicorn --worker-class=gevent wsgi:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
