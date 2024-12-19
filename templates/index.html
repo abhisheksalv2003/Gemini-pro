@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        select, textarea, input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        #generate-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #generate-btn:hover {
+            background-color: #45a049;
+        }
+        #audio-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #audio-player {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text-to-Speech Generator</h1>
+        <form id="tts-form">
+            <div class="form-group">
+                <label for="voice">Select Voice:</label>
+                <select id="voice" name="voice" required>
+                    {% for voice, details in voices.items() %}
+                    <option value="{{ voice }}">{{ voice }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="style">Voice Style:</label>
+                <select id="style" name="style">
+                    <option value="default">Default</option>
+                    <!-- Styles will be dynamically populated by JavaScript -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="text">Enter Text:</label>
+                <textarea id="text" name="text" required placeholder="Enter the text you want to convert to speech..."></textarea>
+            </div>
+            
+            <input type="submit" id="generate-btn" value="Generate Audio">
+            
+            <div id="loading" class="loading" style="display: none;">
+                Generating audio... <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            
+            <div id="error-message" class="error-message"></div>
+            
+            <div id="audio-preview" style="display: none;">
+                <h3>Audio Preview</h3>
+                <audio id="audio-player" controls>
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Get references to form elements
+        const form = document.getElementById('tts-form');
+        const voiceSelect = document.getElementById('voice');
+        const styleSelect = document.getElementById('style');
+        const loadingIndicator = document.getElementById('loading');
+        const errorMessage = document.getElementById('error-message');
+        const audioPreview = document.getElementById('audio-preview');
+        const audioPlayer = document.getElementById('audio-player');
+
+        // Voice styles mapping
+        const voiceStyles = {{ voices|tojson }};
+
+        // Update style options when voice changes
+        voiceSelect.addEventListener('change', function() {
+            const selectedVoice = this.value;
+            const styles = voiceStyles[selectedVoice].styles;
+            
+            // Clear existing styles
+            styleSelect.innerHTML = '';
+            
+            // Add styles for selected voice
+            styles.forEach(style => {
+                const option = document.createElement('option');
+                option.value = style;
+                option.textContent = style.charAt(0).toUpperCase() + style.slice(1);
+                styleSelect.appendChild(option);
+            });
+        });
+
+        // Trigger change event to populate initial styles
+        voiceSelect.dispatchEvent(new Event('change'));
+
+        // Form submission handler
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Reset previous state
+            loadingIndicator.style.display = 'block';
+            errorMessage.textContent = '';
+            audioPreview.style.display = 'none';
+            
+            // Prepare form data
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/generate_audio', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                loadingIndicator.style.display = 'none';
+                
+                if (result.success) {
+                    // Set audio source and show preview
+                    audioPlayer.src = result.audio_path;
+                    audioPreview.style.display = 'block';
+                } else {
+                    // Show error message
+                    errorMessage.textContent = result.error;
+                }
+            } catch (error) {
+                loadingIndicator.style.display = 'none';
+                errorMessage.textContent = 'An error occurred while generating audio.';
+            }
+        });
+    </script>
+</body>
+</html>
