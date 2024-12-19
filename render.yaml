@@ -1,4 +1,9 @@
-Flask==2.3.3
-edge-tts==6.1.9
-gunicorn==21.2.0
-python-dotenv==1.0.0
+services:
+  - type: web
+    name: text-to-speech-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --workers 4 --worker-class aiohttp.worker.GunicornWebWorker
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
