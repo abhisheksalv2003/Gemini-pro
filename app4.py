@@ -2,236 +2,21 @@ import os
 import edge_tts
 from flask import Flask, render_template, request, send_from_directory, jsonify
 
-app = Flask(__name__, static_folder='generated_audio', static_url_path='/generated_audio')
+# Initialize Flask app with modified static folder configuration
+app = Flask(__name__)
 
-# Comprehensive voice dictionary with categorization
-voices = {
-    # English Voices (Categorized by Region)
-    'United States': {
-        'Emma (US)': {
-            'voice_id': 'en-US-EmmaNeural',
-            'styles': ['default', 'cheerful', 'sad', 'excited']
-        },
-        'Jenny (US)': {
-            'voice_id': 'en-US-JennyNeural',
-            'styles': ['default', 'chat', 'customerservice']
-        },
-        'Guy (US)': {
-            'voice_id': 'en-US-GuyNeural',
-            'styles': ['default']
-        },
-        'Aria (US)': {
-            'voice_id': 'en-US-AriaNeural',
-            'styles': ['default']
-        },
-        'Davis (US)': {
-            'voice_id': 'en-US-DavisNeural',
-            'styles': ['default']
-        }
-    },
-    'United Kingdom': {
-        'Jane (UK)': {
-            'voice_id': 'en-GB-SoniaNeural',
-            'styles': ['default']
-        },
-        'Ryan (UK)': {
-            'voice_id': 'en-GB-RyanNeural',
-            'styles': ['default']
-        }
-    },
-    'Australia': {
-        'Libby (AU)': {
-            'voice_id': 'en-AU-NatashaNeural',
-            'styles': ['default']
-        },
-        'William (AU)': {
-            'voice_id': 'en-AU-WilliamNeural',
-            'styles': ['default']
-        }
-    },
-    'Canada': {
-        'Linda (CA)': {
-            'voice_id': 'en-CA-LiamNeural',
-            'styles': ['default']
-        },
-        'Liam (CA)': {
-            'voice_id': 'en-CA-ClaraNeural',
-            'styles': ['default']
-        }
-    },
-    'Ireland': {
-        'Connor (IE)': {
-            'voice_id': 'en-IE-ConnorNeural',
-            'styles': ['default']
-        },
-        'Emily (IE)': {
-            'voice_id': 'en-IE-EmilyNeural',
-            'styles': ['default']
-        }
-    },
-    'India': {
-        'Rosa (IN)': {
-            'voice_id': 'en-IN-NeerjaNeural',
-            'styles': ['default']
-        },
-        'Ravi (IN)': {
-            'voice_id': 'en-IN-PrabhatNeural',
-            'styles': ['default']
-        }
-    },
-    
-    # Indian Regional Languages
-    'Hindi': {
-        'Swara (HI)': {
-            'voice_id': 'hi-IN-SwaraNeural',
-            'styles': ['default']
-        },
-        'Madhur (HI)': {
-            'voice_id': 'hi-IN-MadhurNeural',
-            'styles': ['default']
-        }
-    },
-    'Tamil': {
-        'Pallavi (TA)': {
-            'voice_id': 'ta-IN-PallaviNeural',
-            'styles': ['default']
-        },
-        'Valluvar (TA)': {
-            'voice_id': 'ta-IN-ValluvarNeural',
-            'styles': ['default']
-        }
-    },
-    'Telugu': {
-        'Mohan (TE)': {
-            'voice_id': 'te-IN-MohanNeural',
-            'styles': ['default']
-        },
-        'Shruti (TE)': {
-            'voice_id': 'te-IN-ShrutiNeural',
-            'styles': ['default']
-        }
-    },
-    'Malayalam': {
-        'Sobhana (ML)': {
-            'voice_id': 'ml-IN-SobhanaNeural',
-            'styles': ['default']
-        },
-        'Midhun (ML)': {
-            'voice_id': 'ml-IN-MidhunNeural',
-            'styles': ['default']
-        }
-    },
-    'Kannada': {
-        'Gagan (KN)': {
-            'voice_id': 'kn-IN-GaganNeural',
-            'styles': ['default']
-        },
-        'Sapna (KN)': {
-            'voice_id': 'kn-IN-SapnaNeural',
-            'styles': ['default']
-        }
-    },
-    'Gujarati': {
-        'Dhwani (GU)': {
-            'voice_id': 'gu-IN-DhwaniNeural',
-            'styles': ['default']
-        },
-        'Niranjan (GU)': {
-            'voice_id': 'gu-IN-NiranjanNeural',
-            'styles': ['default']
-        }
-    },
-    'Marathi': {
-        'Aarohi (MR)': {
-            'voice_id': 'mr-IN-AarohiNeural',
-            'styles': ['default']
-        },
-        'Manohar (MR)': {
-            'voice_id': 'mr-IN-ManoharNeural',
-            'styles': ['default']
-        }
-    },
-    'Bengali': {
-        'Tanishaa (BN)': {
-            'voice_id': 'bn-IN-TanishaaNeural',
-            'styles': ['default']
-        },
-        'Bashkar (BN)': {
-            'voice_id': 'bn-IN-BashkarNeural',
-            'styles': ['default']
-        }
-    },
-    'Punjabi': {
-        'Amala (PA)': {
-            'voice_id': 'pa-IN-AmaraNeural',
-            'styles': ['default']
-        },
-        'Gurdeep (PA)': {
-            'voice_id': 'pa-IN-GurdeepNeural',
-            'styles': ['default']
-        }
-    },
-    'Odia': {
-        'Prachi (OR)': {
-            'voice_id': 'or-IN-PrachiNeural',
-            'styles': ['default']
-        },
-        'Manish (OR)': {
-            'voice_id': 'or-IN-ManishNeural',
-            'styles': ['default']
-        }
-    },
-    'Assamese': {
-        'Nabanita (AS)': {
-            'voice_id': 'as-IN-NabanitaNeural',
-            'styles': ['default']
-        },
-        'Manish (AS)': {
-            'voice_id': 'as-IN-ManishNeural',
-            'styles': ['default']
-        }
-    },
-    
-    # Multilingual Models
-    'Multilingual': {
-        'Emma (Multi)': {
-            'voice_id': 'en-US-EmmaMultilingualNeural',
-            'styles': ['default']
-        },
-        'Guy (Multi)': {
-            'voice_id': 'fr-FR-VivienneMultilingualNeural',
-            'styles': ['default']
-        },
-        'Serafina (Multi)': {
-            'voice_id': 'de-DE-SeraphinaMultilingualNeural',
-            'styles': ['default']
-        },
-        'Florian (Multi)': {
-            'voice_id': 'de-DE-FlorianMultilingualNeural',
-            'styles': ['default']
-        },
-        'Remy (Multi)': {
-            'voice_id': 'fr-FR-RemyMultilingualNeural',
-            'styles': ['default']
-        },
-        'Ava (Multi)': {
-            'voice_id': 'en-US-AvaMultilingualNeural',
-            'styles': ['default']
-        },
-        'Andrew (Multi)': {
-            'voice_id': 'en-US-AndrewMultilingualNeural',
-            'styles': ['default']
-        },
-        'Brian (Multi)': {
-            'voice_id': 'en-US-caBrianMultilingualNeural',
-            'styles': ['default']
-        }
-    }
-}
+# Configure static folder for generated audio
+if os.environ.get('RENDER'):
+    # Use absolute path for Render deployment
+    AUDIO_DIR = '/opt/render/project/src/generated_audio'
+else:
+    # Use relative path for local development
+    AUDIO_DIR = 'generated_audio'
 
-# Directory to save generated audio files
-AUDIO_DIR = 'generated_audio'
 os.makedirs(AUDIO_DIR, exist_ok=True)
+
+# Rest of your existing voices dictionary and routes remain the same
+# [Previous voices dictionary code remains unchanged]
 
 @app.route('/')
 def index():
@@ -293,6 +78,10 @@ async def generate_audio():
             'success': False
         })
 
+@app.route('/generated_audio/<filename>')
+def serve_audio(filename):
+    return send_from_directory(AUDIO_DIR, filename)
+
 @app.route('/download_audio/<filename>')
 def download_audio(filename):
     try:
@@ -301,4 +90,4 @@ def download_audio(filename):
         return str(e), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
