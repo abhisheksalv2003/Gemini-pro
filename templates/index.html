@@ -1,212 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Generator</title>
+    <title>Enhanced Text-to-Speech</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        .slider {
-            @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+        .parameter-control {
+            margin: 10px 0;
         }
-        
-        .slider::-webkit-slider-thumb {
-            @apply appearance-none w-4 h-4 bg-blue-600 rounded-full cursor-pointer transition-all duration-150;
-        }
-        
-        .slider::-webkit-slider-thumb:hover {
-            @apply bg-blue-700 transform scale-110;
-        }
-
-        .loading-wave {
-            width: 300px;
-            height: 100px;
+        .slider-container {
             display: flex;
-            justify-content: center;
-            align-items: flex-end;
+            align-items: center;
+            gap: 10px;
         }
-
-        .loading-bar {
-            width: 20px;
-            height: 10px;
-            margin: 0 5px;
-            background-color: #3B82F6;
-            border-radius: 5px;
-            animation: loading-wave-animation 1s ease-in-out infinite;
-        }
-
-        .loading-bar:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        .loading-bar:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        .loading-bar:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes loading-wave-animation {
-            0% {
-                height: 10px;
-            }
-            50% {
-                height: 50px;
-            }
-            100% {
-                height: 10px;
-            }
+        .slider-value {
+            min-width: 60px;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Voice Generator</h1>
-            <p class="text-gray-600">Transform your text into natural-sounding speech</p>
+<body>
+    <h1>Text-to-Speech Converter</h1>
+    
+    <div>
+        <textarea id="text" rows="5" cols="50" placeholder="Enter text to convert"></textarea>
+    </div>
+
+    <div>
+        <label for="voice">Select Voice:</label>
+        <select id="voice">
+            {% for voice_name, voice_info in voices.items() %}
+                <option value="{{ voice_name }}">{{ voice_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="style">Select Style:</label>
+        <select id="style">
+            <option value="default">Default</option>
+        </select>
+    </div>
+
+    <div class="parameter-control">
+        <label>Speech Rate:</label>
+        <div class="slider-container">
+            <input type="range" id="rate" min="-100" max="100" value="0">
+            <span class="slider-value" id="rate-value">+0%</span>
         </div>
+    </div>
 
-        <!-- Main Content -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <!-- Text Input -->
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="text">
-                    Your Text
-                </label>
-                <textarea 
-                    id="text"
-                    class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline min-h-[150px]"
-                    placeholder="Enter the text you want to convert to speech..."
-                    rows="5"
-                ></textarea>
-            </div>
-
-            <!-- Voice Selection -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="voice">
-                        Voice
-                    </label>
-                    <select 
-                        id="voice"
-                        class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        {% for voice_name, voice_info in voices.items() %}
-                            <option value="{{ voice_name }}">{{ voice_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="style">
-                        Speaking Style
-                    </label>
-                    <select 
-                        id="style"
-                        class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        <option value="default">Default</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Voice Controls -->
-            <div class="space-y-6 mb-8">
-                <!-- Speech Rate -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="text-gray-700 text-sm font-bold" for="rate">Speech Rate</label>
-                        <span id="rate-value" class="text-gray-600">+0%</span>
-                    </div>
-                    <input 
-                        type="range" 
-                        id="rate" 
-                        class="slider"
-                        min="-100" 
-                        max="100" 
-                        value="0"
-                    >
-                </div>
-
-                <!-- Volume -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="text-gray-700 text-sm font-bold" for="volume">Volume</label>
-                        <span id="volume-value" class="text-gray-600">+0%</span>
-                    </div>
-                    <input 
-                        type="range" 
-                        id="volume" 
-                        class="slider"
-                        min="-100" 
-                        max="100" 
-                        value="0"
-                    >
-                </div>
-
-                <!-- Pitch -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="text-gray-700 text-sm font-bold" for="pitch">Pitch</label>
-                        <span id="pitch-value" class="text-gray-600">+0Hz</span>
-                    </div>
-                    <input 
-                        type="range" 
-                        id="pitch" 
-                        class="slider"
-                        min="-100" 
-                        max="100" 
-                        value="0"
-                    >
-                </div>
-            </div>
-
-            <!-- Generate Button -->
-            <button 
-                onclick="generateSpeech()"
-                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.02]"
-            >
-                Generate Speech
-            </button>
+    <div class="parameter-control">
+        <label>Volume:</label>
+        <div class="slider-container">
+            <input type="range" id="volume" min="-100" max="100" value="0">
+            <span class="slider-value" id="volume-value">+0%</span>
         </div>
+    </div>
 
-        <!-- Audio Player -->
-        <div id="audio-player" class="bg-white rounded-lg shadow-lg p-6 mb-8 hidden">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Generated Audio</h3>
-                <audio 
-                    controls 
-                    id="audio-element"
-                    class="w-full"
-                ></audio>
-            </div>
-            <button 
-                onclick="downloadAudio()"
-                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out flex items-center justify-center gap-2"
-            >
-                <i class="fas fa-download"></i>
-                Download Audio
-            </button>
+    <div class="parameter-control">
+        <label>Pitch:</label>
+        <div class="slider-container">
+            <input type="range" id="pitch" min="-100" max="100" value="0">
+            <span class="slider-value" id="pitch-value">+0Hz</span>
         </div>
+    </div>
 
-        <!-- Loading Animation -->
-        <div id="loading" class="hidden">
-            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white p-8 rounded-lg text-center">
-                    <div class="loading-wave mb-4">
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                    </div>
-                    <p class="text-gray-700">Generating audio...</p>
-                </div>
-            </div>
-        </div>
+    <button onclick="generateSpeech()">Generate Speech</button>
+
+    <div id="audio-player" style="display: none; margin-top: 20px;">
+        <audio controls id="audio-element"></audio>
+        <button onclick="downloadAudio()">Download Audio</button>
     </div>
 
     <script>
@@ -243,9 +105,6 @@
         });
 
         function generateSpeech() {
-            // Show loading animation
-            $('#loading').removeClass('hidden');
-            
             const formData = new FormData();
             formData.append('text', $('#text').val());
             formData.append('voice', $('#voice').val());
@@ -261,20 +120,15 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    // Hide loading animation
-                    $('#loading').addClass('hidden');
-                    
                     if (response.success) {
                         $('#audio-element').attr('src', response.audio_path);
-                        $('#audio-player').removeClass('hidden');
+                        $('#audio-player').show();
                         window.currentAudioFile = response.filename;
                     } else {
                         alert('Error: ' + response.error);
                     }
                 },
                 error: function() {
-                    // Hide loading animation
-                    $('#loading').addClass('hidden');
                     alert('Error generating audio');
                 }
             });
