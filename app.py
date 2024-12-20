@@ -11,7 +11,7 @@ os.makedirs(AUDIO_DIR, exist_ok=True)
 
 # Your existing voices dictionary remains the same
 voices = {
-    # English Voices (Categorized by Region)
+# English Voices (Categorized by Region)
     'United States': {
         'Emma (US)': {
             'voice_id': 'en-US-EmmaNeural',
@@ -84,7 +84,7 @@ voices = {
             'styles': ['default']
         }
     },
-    
+
     # Indian Regional Languages
     'Hindi': {
         'Swara (HI)': {
@@ -196,7 +196,7 @@ voices = {
             'styles': ['default']
         }
     },
-    
+
     # Multilingual Models
     'Multilingual': {
         'Emma (Multi)': {
@@ -233,6 +233,8 @@ voices = {
         }
     }
 }
+
+    # ... (keeping your existing voices dictionary as is)
 
 @app.route('/')
 def index():
