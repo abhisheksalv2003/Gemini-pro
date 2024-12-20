@@ -243,9 +243,15 @@ def index():
 
 @app.route('/generate_audio', methods=['POST'])
 async def generate_audio():
+    # Get basic parameters
     text = request.form.get('text')
     selected_voice = request.form.get('voice')
     selected_style = request.form.get('style', 'default')
+    
+    # Get additional TTS parameters
+    rate = request.form.get('rate', '+0%')  # Default: normal speed
+    volume = request.form.get('volume', '+0%')  # Default: normal volume
+    pitch = request.form.get('pitch', '+0Hz')  # Default: normal pitch
     
     if not text or not selected_voice:
         return jsonify({
@@ -267,19 +273,34 @@ async def generate_audio():
                 'success': False
             })
         
+        # Apply style if selected
         if selected_style != 'default':
             voice_id = f"{voice_id}(Style:{selected_style})"
         
-        audio_filename = f"{selected_voice.replace(' ', '_')}_{selected_style}_{hash(text)}.mp3"
+        # Create unique filename based on parameters
+        audio_filename = f"{selected_voice.replace(' ', '_')}_{selected_style}_{hash(text)}_{rate}_{volume}_{pitch}.mp3"
         audio_filepath = os.path.join(AUDIO_DIR, audio_filename)
         
-        communicate = edge_tts.Communicate(text, voice_id)
+        # Create communicate instance with all parameters
+        communicate = edge_tts.Communicate(
+            text=text,
+            voice=voice_id,
+            rate=rate,      # e.g., '+50%', '-20%'
+            volume=volume,  # e.g., '+50%', '-20%'
+            pitch=pitch     # e.g., '+50Hz', '-20Hz'
+        )
+        
         await communicate.save(audio_filepath)
         
         return jsonify({
             'success': True,
             'audio_path': f'/generated_audio/{audio_filename}',
-            'filename': audio_filename
+            'filename': audio_filename,
+            'parameters': {
+                'rate': rate,
+                'volume': volume,
+                'pitch': pitch
+            }
         })
     
     except Exception as e:
@@ -298,6 +319,21 @@ def download_audio(filename):
         return send_from_directory(AUDIO_DIR, filename, as_attachment=True)
     except Exception as e:
         return str(e), 404
+
+# New endpoint to get available voice features
+@app.route('/voice_features/<voice_name>')
+def get_voice_features(voice_name):
+    for category in voices.values():
+        if voice_name in category:
+            voice_info = category[voice_name]
+            return jsonify({
+                'voice_id': voice_info['voice_id'],
+                'styles': voice_info['styles'],
+                'rate_range': {'min': '-100%', 'max': '+100%', 'default': '+0%'},
+                'volume_range': {'min': '-100%', 'max': '+100%', 'default': '+0%'},
+                'pitch_range': {'min': '-100Hz', 'max': '+100Hz', 'default': '+0Hz'}
+            })
+    return jsonify({'error': 'Voice not found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
