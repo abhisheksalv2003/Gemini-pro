@@ -3,195 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text-to-Speech Generator</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>AI Voice Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .slider {
+            @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
         }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+        
+        .slider::-webkit-slider-thumb {
+            @apply appearance-none w-4 h-4 bg-blue-600 rounded-full cursor-pointer transition-all duration-150;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            @apply bg-blue-700 transform scale-110;
+        }
+
+        .loading-wave {
+            width: 300px;
+            height: 100px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            align-items: flex-end;
         }
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-        }
-        select, textarea, input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+
+        .loading-bar {
+            width: 20px;
+            height: 10px;
+            margin: 0 5px;
+            background-color: #3B82F6;
             border-radius: 5px;
+            animation: loading-wave-animation 1s ease-in-out infinite;
         }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+
+        .loading-bar:nth-child(2) {
+            animation-delay: 0.1s;
         }
-        #generate-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+
+        .loading-bar:nth-child(3) {
+            animation-delay: 0.2s;
         }
-        #generate-btn:hover {
-            background-color: #45a049;
+
+        .loading-bar:nth-child(4) {
+            animation-delay: 0.3s;
         }
-        #audio-preview {
-            margin-top: 20px;
-            text-align: center;
-        }
-        #audio-player {
-            width: 100%;
-            margin-top: 10px;
-        }
-        .error-message {
-            color: red;
-            text-align: center;
-            margin-top: 10px;
-        }
-        .loading {
-            text-align: center;
-            color: #666;
-            margin-top: 10px;
+
+        @keyframes loading-wave-animation {
+            0% {
+                height: 10px;
+            }
+            50% {
+                height: 50px;
+            }
+            100% {
+                height: 10px;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Text-to-Speech Generator</h1>
-        <form id="tts-form">
-            <div class="form-group">
-                <label for="voice">Select Voice:</label>
-                <select id="voice" name="voice" required>
-                    {% for voice, details in voices.items() %}
-                    <option value="{{ voice }}">{{ voice }}</option>
-                    {% endfor %}
-                </select>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Voice Generator</h1>
+            <p class="text-gray-600">Transform your text into natural-sounding speech</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <!-- Text Input -->
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="text">
+                    Your Text
+                </label>
+                <textarea 
+                    id="text"
+                    class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline min-h-[150px]"
+                    placeholder="Enter the text you want to convert to speech..."
+                    rows="5"
+                ></textarea>
             </div>
-            
-            <div class="form-group">
-                <label for="style">Voice Style:</label>
-                <select id="style" name="style">
-                    <option value="default">Default</option>
-                    <!-- Styles will be dynamically populated by JavaScript -->
-                </select>
+
+            <!-- Voice Selection -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="voice">
+                        Voice
+                    </label>
+                    <select 
+                        id="voice"
+                        class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
+                    >
+                        {% for voice_name, voice_info in voices.items() %}
+                            <option value="{{ voice_name }}">{{ voice_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="style">
+                        Speaking Style
+                    </label>
+                    <select 
+                        id="style"
+                        class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
+                    >
+                        <option value="default">Default</option>
+                    </select>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="text">Enter Text:</label>
-                <textarea id="text" name="text" required placeholder="Enter the text you want to convert to speech..."></textarea>
+
+            <!-- Voice Controls -->
+            <div class="space-y-6 mb-8">
+                <!-- Speech Rate -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-gray-700 text-sm font-bold" for="rate">Speech Rate</label>
+                        <span id="rate-value" class="text-gray-600">+0%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="rate" 
+                        class="slider"
+                        min="-100" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
+
+                <!-- Volume -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-gray-700 text-sm font-bold" for="volume">Volume</label>
+                        <span id="volume-value" class="text-gray-600">+0%</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="volume" 
+                        class="slider"
+                        min="-100" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
+
+                <!-- Pitch -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-gray-700 text-sm font-bold" for="pitch">Pitch</label>
+                        <span id="pitch-value" class="text-gray-600">+0Hz</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="pitch" 
+                        class="slider"
+                        min="-100" 
+                        max="100" 
+                        value="0"
+                    >
+                </div>
             </div>
-            
-            <input type="submit" id="generate-btn" value="Generate Audio">
-            
-            <div id="loading" class="loading" style="display: none;">
-                Generating audio... <i class="fas fa-spinner fa-spin"></i>
+
+            <!-- Generate Button -->
+            <button 
+                onclick="generateSpeech()"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.02]"
+            >
+                Generate Speech
+            </button>
+        </div>
+
+        <!-- Audio Player -->
+        <div id="audio-player" class="bg-white rounded-lg shadow-lg p-6 mb-8 hidden">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Generated Audio</h3>
+                <audio 
+                    controls 
+                    id="audio-element"
+                    class="w-full"
+                ></audio>
             </div>
-            
-            <div id="error-message" class="error-message"></div>
-            
-            <div id="audio-preview" style="display: none;">
-                <h3>Audio Preview</h3>
-                <audio id="audio-player" controls>
-                    Your browser does not support the audio element.
-                </audio>
+            <button 
+                onclick="downloadAudio()"
+                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out flex items-center justify-center gap-2"
+            >
+                <i class="fas fa-download"></i>
+                Download Audio
+            </button>
+        </div>
+
+        <!-- Loading Animation -->
+        <div id="loading" class="hidden">
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white p-8 rounded-lg text-center">
+                    <div class="loading-wave mb-4">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
+                    <p class="text-gray-700">Generating audio...</p>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 
     <script>
-        // Get references to form elements
-        const form = document.getElementById('tts-form');
-        const voiceSelect = document.getElementById('voice');
-        const styleSelect = document.getElementById('style');
-        const loadingIndicator = document.getElementById('loading');
-        const errorMessage = document.getElementById('error-message');
-        const audioPreview = document.getElementById('audio-preview');
-        const audioPlayer = document.getElementById('audio-player');
-
-        // Voice styles mapping
-        const voiceStyles = {{ voices|tojson }};
-
         // Update style options when voice changes
-        voiceSelect.addEventListener('change', function() {
-            const selectedVoice = this.value;
-            const styles = voiceStyles[selectedVoice].styles;
-            
-            // Clear existing styles
-            styleSelect.innerHTML = '';
-            
-            // Add styles for selected voice
-            styles.forEach(style => {
-                const option = document.createElement('option');
-                option.value = style;
-                option.textContent = style.charAt(0).toUpperCase() + style.slice(1);
-                styleSelect.appendChild(option);
+        $('#voice').change(function() {
+            const selectedVoice = $(this).val();
+            $.get(`/voice_features/${selectedVoice}`, function(data) {
+                const styleSelect = $('#style');
+                styleSelect.empty();
+                styleSelect.append($('<option>').val('default').text('Default'));
+                data.styles.forEach(style => {
+                    if (style !== 'default') {
+                        styleSelect.append($('<option>').val(style).text(style));
+                    }
+                });
             });
         });
 
-        // Trigger change event to populate initial styles
-        voiceSelect.dispatchEvent(new Event('change'));
+        // Update slider values
+        function updateSliderValue(slider, value, unit) {
+            $(`#${slider}-value`).text((value >= 0 ? '+' : '') + value + unit);
+        }
 
-        // Form submission handler
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Reset previous state
-            loadingIndicator.style.display = 'block';
-            errorMessage.textContent = '';
-            audioPreview.style.display = 'none';
-            
-            // Prepare form data
-            const formData = new FormData(form);
-            
-            try {
-                const response = await fetch('/generate_audio', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                loadingIndicator.style.display = 'none';
-                
-                if (result.success) {
-                    // Set audio source and show preview
-                    audioPlayer.src = result.audio_path;
-                    audioPreview.style.display = 'block';
-                } else {
-                    // Show error message
-                    errorMessage.textContent = result.error;
-                }
-            } catch (error) {
-                loadingIndicator.style.display = 'none';
-                errorMessage.textContent = 'An error occurred while generating audio.';
-            }
+        $('#rate').on('input', function() {
+            updateSliderValue('rate', $(this).val(), '%');
         });
+
+        $('#volume').on('input', function() {
+            updateSliderValue('volume', $(this).val(), '%');
+        });
+
+        $('#pitch').on('input', function() {
+            updateSliderValue('pitch', $(this).val(), 'Hz');
+        });
+
+        function generateSpeech() {
+            // Show loading animation
+            $('#loading').removeClass('hidden');
+            
+            const formData = new FormData();
+            formData.append('text', $('#text').val());
+            formData.append('voice', $('#voice').val());
+            formData.append('style', $('#style').val());
+            formData.append('rate', $('#rate-value').text());
+            formData.append('volume', $('#volume-value').text());
+            formData.append('pitch', $('#pitch-value').text());
+
+            $.ajax({
+                url: '/generate_audio',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // Hide loading animation
+                    $('#loading').addClass('hidden');
+                    
+                    if (response.success) {
+                        $('#audio-element').attr('src', response.audio_path);
+                        $('#audio-player').removeClass('hidden');
+                        window.currentAudioFile = response.filename;
+                    } else {
+                        alert('Error: ' + response.error);
+                    }
+                },
+                error: function() {
+                    // Hide loading animation
+                    $('#loading').addClass('hidden');
+                    alert('Error generating audio');
+                }
+            });
+        }
+
+        function downloadAudio() {
+            if (window.currentAudioFile) {
+                window.location.href = '/download_audio/' + window.currentAudioFile;
+            }
+        }
     </script>
 </body>
 </html>
