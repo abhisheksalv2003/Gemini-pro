@@ -70,7 +70,7 @@ voices = {
         'Ava (Multi)': {'voice_id': 'en-US-AvaMultilingualNeural', 'styles': ['default']},
         'Andrew (Multi)': {'voice_id': 'en-US-AndrewMultilingualNeural', 'styles': ['default']},
         'Brian (Multi)': {'voice_id': 'en-US-caBrianMultilingualNeural', 'styles': ['default']}
-    }
+    }
 }
 
 @app.route('/')
