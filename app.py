@@ -11,19 +11,66 @@ voices = {
         'Emma': {'voice_id': 'en-US-EmmaNeural', 'styles': ['default', 'cheerful', 'sad']},
         'Jenny': {'voice_id': 'en-US-JennyNeural', 'styles': ['default', 'assistant']},
         'Tony': {'voice_id': 'en-US-TonyNeural', 'styles': ['default', 'formal']},
+        'Guy': {'voice_id': 'en-US-GuyNeural', 'styles': ['default', 'newscast']},
+        'Aria': {'voice_id': 'en-US-AriaNeural', 'styles': ['default', 'cheerful', 'chat']},
+        'Davis': {'voice_id': 'en-US-DavisNeural', 'styles': ['default', 'calm']}
     },
     'Spanish': {
         'Alvaro': {'voice_id': 'es-ES-AlvaroNeural', 'styles': ['default']},
         'Elena': {'voice_id': 'es-ES-ElenaNeural', 'styles': ['default']},
+        'Jorge': {'voice_id': 'es-MX-JorgeNeural', 'styles': ['default']},
+        'Dalia': {'voice_id': 'es-MX-DaliaNeural', 'styles': ['default']}
     },
     'French': {
         'Henri': {'voice_id': 'fr-FR-HenriNeural', 'styles': ['default']},
         'Denise': {'voice_id': 'fr-FR-DeniseNeural', 'styles': ['default']},
+        'Jerome': {'voice_id': 'fr-FR-JeromeNeural', 'styles': ['default']},
+        'Alain': {'voice_id': 'fr-CA-AlainNeural', 'styles': ['default']}
     },
     'German': {
         'Katja': {'voice_id': 'de-DE-KatjaNeural', 'styles': ['default']},
         'Conrad': {'voice_id': 'de-DE-ConradNeural', 'styles': ['default']},
-    }
+        'Amala': {'voice_id': 'de-DE-AmalaNeural', 'styles': ['default', 'cheerful']},
+        'Klaus': {'voice_id': 'de-DE-KlausNeural', 'styles': ['default']}
+    },
+    'Italian': {
+        'Diego': {'voice_id': 'it-IT-DiegoNeural', 'styles': ['default']},
+        'Elsa': {'voice_id': 'it-IT-ElsaNeural', 'styles': ['default']},
+        'Isabella': {'voice_id': 'it-IT-IsabellaNeural', 'styles': ['default', 'cheerful']}
+    },
+    'Japanese': {
+        'Nanami': {'voice_id': 'ja-JP-NanamiNeural', 'styles': ['default', 'cheerful']},
+        'Keita': {'voice_id': 'ja-JP-KeitaNeural', 'styles': ['default']},
+        'Shiori': {'voice_id': 'ja-JP-ShioriNeural', 'styles': ['default']}
+    },
+    'Chinese': {
+        'Xiaoxiao': {'voice_id': 'zh-CN-XiaoxiaoNeural', 'styles': ['default', 'cheerful']},
+        'Yunyang': {'voice_id': 'zh-CN-YunyangNeural', 'styles': ['default', 'narration']},
+        'Xiaoyi': {'voice_id': 'zh-CN-XiaoyiNeural', 'styles': ['default']}
+    },
+    'Korean': {
+        'SunHi': {'voice_id': 'ko-KR-SunHiNeural', 'styles': ['default', 'cheerful']},
+        'InJoon': {'voice_id': 'ko-KR-InJoonNeural', 'styles': ['default']},
+    },
+    'Russian': {
+        'Dmitry': {'voice_id': 'ru-RU-DmitryNeural', 'styles': ['default']},
+        'Svetlana': {'voice_id': 'ru-RU-SvetlanaNeural', 'styles': ['default']},
+    },
+    'Portuguese': {
+        'Antonio': {'voice_id': 'pt-PT-AntonioNeural', 'styles': ['default']},
+        'Francisca': {'voice_id': 'pt-PT-FranciscaNeural', 'styles': ['default']},
+        'Manuela': {'voice_id': 'pt-BR-ManuelaNeural', 'styles': ['default', 'cheerful']}
+    },
+    'Multilingual': {
+        'Emma (Multi)': {'voice_id': 'en-US-EmmaMultilingualNeural', 'styles': ['default']},
+        'Guy (Multi)': {'voice_id': 'fr-FR-VivienneMultilingualNeural', 'styles': ['default']},
+        'Serafina (Multi)': {'voice_id': 'de-DE-SeraphinaMultilingualNeural', 'styles': ['default']},
+        'Florian (Multi)': {'voice_id': 'de-DE-FlorianMultilingualNeural', 'styles': ['default']},
+        'Remy (Multi)': {'voice_id': 'fr-FR-RemyMultilingualNeural', 'styles': ['default']},
+        'Ava (Multi)': {'voice_id': 'en-US-AvaMultilingualNeural', 'styles': ['default']},
+        'Andrew (Multi)': {'voice_id': 'en-US-AndrewMultilingualNeural', 'styles': ['default']},
+        'Brian (Multi)': {'voice_id': 'en-US-caBrianMultilingualNeural', 'styles': ['default']}
+    }
 }
 
 @app.route('/')
