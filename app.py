@@ -7,69 +7,102 @@ AUDIO_DIR = os.path.join(os.getcwd(), 'generated_audio')
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
 voices = {
-    'English': {
-        'Emma': {'voice_id': 'en-US-EmmaNeural', 'styles': ['default', 'cheerful', 'sad']},
-        'Jenny': {'voice_id': 'en-US-JennyNeural', 'styles': ['default', 'assistant']},
-        'Tony': {'voice_id': 'en-US-TonyNeural', 'styles': ['default', 'formal']},
-        'Guy': {'voice_id': 'en-US-GuyNeural', 'styles': ['default', 'newscast']},
-        'Aria': {'voice_id': 'en-US-AriaNeural', 'styles': ['default', 'cheerful', 'chat']},
-        'Davis': {'voice_id': 'en-US-DavisNeural', 'styles': ['default', 'calm']}
+    'Multilingual': {
+        'Andrew': {'voice_id': 'en-US-AndrewMultilingualNeural', 'styles': ['default']},
+        'Ava': {'voice_id': 'en-US-AvaMultilingualNeural', 'styles': ['default']},
+        'Brian': {'voice_id': 'en-US-BrianMultilingualNeural', 'styles': ['default']},
+        'Emma': {'voice_id': 'en-US-EmmaMultilingualNeural', 'styles': ['default']},
+        'Florian': {'voice_id': 'de-DE-FlorianMultilingualNeural', 'styles': ['default']},
+        'Giuseppe': {'voice_id': 'it-IT-GiuseppeMultilingualNeural', 'styles': ['default']},
+        'Hyunsu': {'voice_id': 'ko-KR-HyunsuMultilingualNeural', 'styles': ['default']},
+        'Remy': {'voice_id': 'fr-FR-RemyMultilingualNeural', 'styles': ['default']},
+        'Seraphina': {'voice_id': 'de-DE-SeraphinaMultilingualNeural', 'styles': ['default']},
+        'Thalita': {'voice_id': 'pt-BR-ThalitaMultilingualNeural', 'styles': ['default']},
+        'Vivienne': {'voice_id': 'fr-FR-VivienneMultilingualNeural', 'styles': ['default']}
     },
-    'Spanish': {
-        'Alvaro': {'voice_id': 'es-ES-AlvaroNeural', 'styles': ['default']},
-        'Elena': {'voice_id': 'es-ES-ElenaNeural', 'styles': ['default']},
-        'Jorge': {'voice_id': 'es-MX-JorgeNeural', 'styles': ['default']},
-        'Dalia': {'voice_id': 'es-MX-DaliaNeural', 'styles': ['default']}
+    'Arabic': {
+        'Fatima': {'voice_id': 'ar-AE-FatimaNeural', 'styles': ['default']},
+        'Hamdan': {'voice_id': 'ar-AE-HamdanNeural', 'styles': ['default']},
+        'Ali': {'voice_id': 'ar-BH-AliNeural', 'styles': ['default']},
+        'Laila': {'voice_id': 'ar-BH-LailaNeural', 'styles': ['default']},
+        'Salma': {'voice_id': 'ar-EG-SalmaNeural', 'styles': ['default']},
+        'Shakir': {'voice_id': 'ar-EG-ShakirNeural', 'styles': ['default']}
+    },
+    'Chinese': {
+        'Xiaoxiao': {'voice_id': 'zh-CN-XiaoxiaoNeural', 'styles': ['default']},
+        'Xiaoyi': {'voice_id': 'zh-CN-XiaoyiNeural', 'styles': ['default']},
+        'Yunjian': {'voice_id': 'zh-CN-YunjianNeural', 'styles': ['default']},
+        'Yunxi': {'voice_id': 'zh-CN-YunxiNeural', 'styles': ['default']},
+        'Yunxia': {'voice_id': 'zh-CN-YunxiaNeural', 'styles': ['default']},
+        'Yunyang': {'voice_id': 'zh-CN-YunyangNeural', 'styles': ['default']}
+    },
+    'English': {
+        'Ana': {'voice_id': 'en-US-AnaNeural', 'styles': ['default']},
+        'Andrew': {'voice_id': 'en-US-AndrewNeural', 'styles': ['default']},
+        'Aria': {'voice_id': 'en-US-AriaNeural', 'styles': ['default']},
+        'Ava': {'voice_id': 'en-US-AvaNeural', 'styles': ['default']},
+        'Brian': {'voice_id': 'en-US-BrianNeural', 'styles': ['default']},
+        'Christopher': {'voice_id': 'en-US-ChristopherNeural', 'styles': ['default']},
+        'Emma': {'voice_id': 'en-US-EmmaNeural', 'styles': ['default']},
+        'Eric': {'voice_id': 'en-US-EricNeural', 'styles': ['default']},
+        'Guy': {'voice_id': 'en-US-GuyNeural', 'styles': ['default']},
+        'Jenny': {'voice_id': 'en-US-JennyNeural', 'styles': ['default']},
+        'Michelle': {'voice_id': 'en-US-MichelleNeural', 'styles': ['default']},
+        'Roger': {'voice_id': 'en-US-RogerNeural', 'styles': ['default']},
+        'Steffan': {'voice_id': 'en-US-SteffanNeural', 'styles': ['default']}
     },
     'French': {
-        'Henri': {'voice_id': 'fr-FR-HenriNeural', 'styles': ['default']},
         'Denise': {'voice_id': 'fr-FR-DeniseNeural', 'styles': ['default']},
-        'Jerome': {'voice_id': 'fr-FR-JeromeNeural', 'styles': ['default']},
-        'Alain': {'voice_id': 'fr-CA-AlainNeural', 'styles': ['default']}
+        'Eloise': {'voice_id': 'fr-FR-EloiseNeural', 'styles': ['default']},
+        'Henri': {'voice_id': 'fr-FR-HenriNeural', 'styles': ['default']},
+        'Charline': {'voice_id': 'fr-BE-CharlineNeural', 'styles': ['default']},
+        'Gerard': {'voice_id': 'fr-BE-GerardNeural', 'styles': ['default']},
+        'Antoine': {'voice_id': 'fr-CA-AntoineNeural', 'styles': ['default']},
+        'Jean': {'voice_id': 'fr-CA-JeanNeural', 'styles': ['default']},
+        'Sylvie': {'voice_id': 'fr-CA-SylvieNeural', 'styles': ['default']},
+        'Thierry': {'voice_id': 'fr-CA-ThierryNeural', 'styles': ['default']}
     },
     'German': {
-        'Katja': {'voice_id': 'de-DE-KatjaNeural', 'styles': ['default']},
+        'Amala': {'voice_id': 'de-DE-AmalaNeural', 'styles': ['default']},
         'Conrad': {'voice_id': 'de-DE-ConradNeural', 'styles': ['default']},
-        'Amala': {'voice_id': 'de-DE-AmalaNeural', 'styles': ['default', 'cheerful']},
-        'Klaus': {'voice_id': 'de-DE-KlausNeural', 'styles': ['default']}
+        'Katja': {'voice_id': 'de-DE-KatjaNeural', 'styles': ['default']},
+        'Killian': {'voice_id': 'de-DE-KillianNeural', 'styles': ['default']}
+    },
+    'Hindi': {
+        'Madhur': {'voice_id': 'hi-IN-MadhurNeural', 'styles': ['default']},
+        'Swara': {'voice_id': 'hi-IN-SwaraNeural', 'styles': ['default']}
     },
     'Italian': {
         'Diego': {'voice_id': 'it-IT-DiegoNeural', 'styles': ['default']},
         'Elsa': {'voice_id': 'it-IT-ElsaNeural', 'styles': ['default']},
-        'Isabella': {'voice_id': 'it-IT-IsabellaNeural', 'styles': ['default', 'cheerful']}
+        'Isabella': {'voice_id': 'it-IT-IsabellaNeural', 'styles': ['default']}
     },
     'Japanese': {
-        'Nanami': {'voice_id': 'ja-JP-NanamiNeural', 'styles': ['default', 'cheerful']},
         'Keita': {'voice_id': 'ja-JP-KeitaNeural', 'styles': ['default']},
-        'Shiori': {'voice_id': 'ja-JP-ShioriNeural', 'styles': ['default']}
-    },
-    'Chinese': {
-        'Xiaoxiao': {'voice_id': 'zh-CN-XiaoxiaoNeural', 'styles': ['default', 'cheerful']},
-        'Yunyang': {'voice_id': 'zh-CN-YunyangNeural', 'styles': ['default', 'narration']},
-        'Xiaoyi': {'voice_id': 'zh-CN-XiaoyiNeural', 'styles': ['default']}
+        'Nanami': {'voice_id': 'ja-JP-NanamiNeural', 'styles': ['default']}
     },
     'Korean': {
-        'SunHi': {'voice_id': 'ko-KR-SunHiNeural', 'styles': ['default', 'cheerful']},
         'InJoon': {'voice_id': 'ko-KR-InJoonNeural', 'styles': ['default']},
+        'SunHi': {'voice_id': 'ko-KR-SunHiNeural', 'styles': ['default']}
+    },
+    'Portuguese': {
+        'Antonio': {'voice_id': 'pt-BR-AntonioNeural', 'styles': ['default']},
+        'Francisca': {'voice_id': 'pt-BR-FranciscaNeural', 'styles': ['default']},
+        'Duarte': {'voice_id': 'pt-PT-DuarteNeural', 'styles': ['default']},
+        'Raquel': {'voice_id': 'pt-PT-RaquelNeural', 'styles': ['default']}
     },
     'Russian': {
         'Dmitry': {'voice_id': 'ru-RU-DmitryNeural', 'styles': ['default']},
-        'Svetlana': {'voice_id': 'ru-RU-SvetlanaNeural', 'styles': ['default']},
+        'Svetlana': {'voice_id': 'ru-RU-SvetlanaNeural', 'styles': ['default']}
     },
-    'Portuguese': {
-        'Antonio': {'voice_id': 'pt-PT-AntonioNeural', 'styles': ['default']},
-        'Francisca': {'voice_id': 'pt-PT-FranciscaNeural', 'styles': ['default']},
-        'Manuela': {'voice_id': 'pt-BR-ManuelaNeural', 'styles': ['default', 'cheerful']}
-    },
-    'Multilingual': {
-        'Emma (Multi)': {'voice_id': 'en-US-EmmaMultilingualNeural', 'styles': ['default']},
-        'Guy (Multi)': {'voice_id': 'fr-FR-VivienneMultilingualNeural', 'styles': ['default']},
-        'Serafina (Multi)': {'voice_id': 'de-DE-SeraphinaMultilingualNeural', 'styles': ['default']},
-        'Florian (Multi)': {'voice_id': 'de-DE-FlorianMultilingualNeural', 'styles': ['default']},
-        'Remy (Multi)': {'voice_id': 'fr-FR-RemyMultilingualNeural', 'styles': ['default']},
-        'Ava (Multi)': {'voice_id': 'en-US-AvaMultilingualNeural', 'styles': ['default']},
-        'Andrew (Multi)': {'voice_id': 'en-US-AndrewMultilingualNeural', 'styles': ['default']},
-        'Brian (Multi)': {'voice_id': 'en-US-caBrianMultilingualNeural', 'styles': ['default']}
+    'Spanish': {
+        'Alvaro': {'voice_id': 'es-ES-AlvaroNeural', 'styles': ['default']},
+        'Elvira': {'voice_id': 'es-ES-ElviraNeural', 'styles': ['default']},
+        'Ximena': {'voice_id': 'es-ES-XimenaNeural', 'styles': ['default']},
+        'Dalia': {'voice_id': 'es-MX-DaliaNeural', 'styles': ['default']},
+        'Jorge': {'voice_id': 'es-MX-JorgeNeural', 'styles': ['default']},
+        'Alonso': {'voice_id': 'es-US-AlonsoNeural', 'styles': ['default']},
+        'Paloma': {'voice_id': 'es-US-PalomaNeural', 'styles': ['default']}
     }
 }
 
