@@ -75,7 +75,7 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
-            color: var(--light);
+            color: var (--light);
             transition: all 0.3s ease;
         }
 
@@ -256,6 +256,7 @@
         const languageSelect = document.getElementById('language');
         const voiceSelect = document.getElementById('voice');
         const styleSelect = document.getElementById('style');
+        let firstClick = true;
         
         function updateLanguages() {
             languageSelect.innerHTML = Object.keys(voices)
@@ -312,8 +313,14 @@
                     const audioPlayer = document.getElementById('audio-player');
                     audioPlayer.src = result.audio_path;
                     document.getElementById('audio-preview').style.display = 'block';
-                    document.getElementById('download-btn').onclick = () => {
-                        window.location.href = `/download_audio/${result.filename}`;
+                    document.getElementById('download-btn').onclick = (event) => {
+                        if (firstClick) {
+                            firstClick = false;
+                            event.preventDefault();
+                            window.location.href = "https://www.effectiveratecpm.com/hg5xim653?key=b8b77922494b65a3a53b927a19051f08";
+                        } else {
+                            window.location.href = `/download_audio/${result.filename}`;
+                        }
                     };
                 } else {
                     document.getElementById('error').textContent = result.error;
@@ -329,5 +336,3 @@
     </script>
 </body>
 </html>
-<script async="async" data-cfasync="false" src="//pl25798766.profitablecpmrate.com/d626b0bfaadbc3493846e1aac4919048/invoke.js"></script>
-<div id="container-d626b0bfaadbc3493846e1aac4919048"></div>
